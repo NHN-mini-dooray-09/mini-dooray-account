@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("dev")
 class MemberServiceTest {
 
     @Autowired
@@ -33,20 +35,20 @@ class MemberServiceTest {
     @Test
     @Order(1)
     void testFindByIdAndPassword(){
-        Member testmember=new Member(1L,"test","test@mail.com","1234","testUser");
+        Member testmember=new Member(5L,"test5","test5@mail.com","1234","testUser5");
         entityManager.merge(testmember);
 
-        Member member=memberRepository.findByIdAndPassword("test","1234");
+        Member member=memberRepository.findByIdAndPassword("test5","1234");
         Assertions.assertThat(member).isEqualTo(testmember);
     }
 
     @Test
     @Order(2)
     void findByEmail(){
-        Member testmember=new Member(2L,"test","test2@mail.com","1234","testUser");
+        Member testmember=new Member(6L,"test6","test6@mail.com","1234","testUser6");
         entityManager.merge(testmember);
 
-        Member member=memberRepository.findByEmail("test2@mail.com");
+        Member member=memberRepository.findByEmail("test6@mail.com");
         Assertions.assertThat(member).isEqualTo(testmember);
     }
 }

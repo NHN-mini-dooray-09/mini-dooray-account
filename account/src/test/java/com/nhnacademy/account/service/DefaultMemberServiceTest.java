@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("dev")
 class DefaultMemberServiceTest {
 
     @Autowired
@@ -29,7 +31,7 @@ class DefaultMemberServiceTest {
     @Test
     @Order(1)
     void teatCreateMember(){
-        Member testmember=new Member(1L,"test","test@mail.com","1234","testUser");
+        Member testmember=new Member(2L,"test2","test2@mail.com","1234","testUser2");
         memberRepository.save(testmember);
     }
     @Test
@@ -64,7 +66,7 @@ class DefaultMemberServiceTest {
     @Test
     @Order(5)
     void testGetMember(){
-        Member member=new Member(2L,"test2","test2@mail.com","1234","testUser2");
+        Member member=new Member(3L,"test3","test3@mail.com","1234","testUser3");
         memberRepository.save(member);
 
         Member searchMember=memberService.getMember(member.getSeq());
@@ -77,7 +79,7 @@ class DefaultMemberServiceTest {
     @Test
     @Order(6)
     void testDelete(){
-        Member member=new Member(3L,"test3","test3@mail.com","1234","testUser3");
+        Member member=new Member(4L,"test4","test4@mail.com","1234","testUser4");
         memberRepository.save(member);
 
         List<Member> members=memberService.getMembers();
