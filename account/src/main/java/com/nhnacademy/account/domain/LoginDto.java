@@ -9,4 +9,15 @@ public class LoginDto {
     private String password;
 
     private String email;
+
+
+    public LoginDto(String id, String password) {
+        this.id=id;
+        this.password=password;
+    }
+    public LoginDto(String email){
+        this.email=email;
+    }
+
+
 }

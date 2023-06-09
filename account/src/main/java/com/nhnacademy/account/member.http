@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/account/login/email
+GET http://localhost:8080/accounts/login/email
 Content-Type: application/json
 
 {

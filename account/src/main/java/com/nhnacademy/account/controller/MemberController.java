@@ -1,5 +1,6 @@
 package com.nhnacademy.account.controller;
 
+
 import com.nhnacademy.account.domain.LoginDto;
 import com.nhnacademy.account.domain.MemberDto;
 import com.nhnacademy.account.entity.Member;
@@ -35,7 +36,7 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/account/login/email")
+    @GetMapping("/accounts/login/email")
     public ResponseEntity<String> getEmail(@RequestBody LoginDto loginDto){
         boolean emailExists=memberService.checkEmail(loginDto.getEmail());
         if (emailExists){

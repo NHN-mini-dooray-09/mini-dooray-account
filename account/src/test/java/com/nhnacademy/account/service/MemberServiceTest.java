@@ -1,5 +1,6 @@
 package com.nhnacademy.account.service;
 
+import com.nhnacademy.account.AccountApplication;
 import com.nhnacademy.account.entity.Member;
 import com.nhnacademy.account.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
@@ -8,11 +9,15 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -44,7 +49,4 @@ class MemberServiceTest {
         Member member=memberRepository.findByEmail("test2@mail.com");
         Assertions.assertThat(member).isEqualTo(testmember);
     }
-
-
-
 }

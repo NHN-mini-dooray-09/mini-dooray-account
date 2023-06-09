@@ -1,6 +1,8 @@
 package com.nhnacademy.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.account.AccountApplication;
+import com.nhnacademy.account.domain.LoginDto;
 import com.nhnacademy.account.entity.Member;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -41,28 +43,35 @@ class MemberControllerTest {
 
     @Test
     @Order(2)
+    void testCheckExist()throws Exception{
+        ObjectMapper mapper=new ObjectMapper();
+        LoginDto loginDto=new LoginDto("test","1234");
+        mockMvc.perform(get("/accounts/login")
+                .content(mapper.writeValueAsString(loginDto))
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().string("로그인 되었습니다."));
+    }
+    @Test
+    @Order(3)
+    void testGetEmail() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        LoginDto loginDto = new LoginDto("test@mail.com");
+        mockMvc.perform(get("/accounts/login/email")
+                        .content(mapper.writeValueAsString(loginDto))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().string("이메일이 존재합니다"));
+    }
+
+
+    @Test
+    @Order(4)
     void testGetMembers()throws Exception{
         mockMvc.perform(get("/accounts"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].seq",equalTo(1)));
-    }
-
-    @Test
-    @Order(3)
-    void testCheckExist()throws Exception{
-        mockMvc.perform(get("/accounts/login"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id",equalTo("test")))
-                .andExpect(jsonPath("$[0].password",equalTo("1234")));
-    }
-
-    @Test
-    @Order(4)
-    void testGetEmail()throws Exception{
-
-
     }
 
     @Test
