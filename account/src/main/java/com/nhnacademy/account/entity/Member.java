@@ -17,7 +17,7 @@ public class Member {
     @Column(name = "member_seq")
     private Long seq;
 
-    @Column(name = "member_id")
+    @Column(name = "member_id",unique = true)
     private String id;
 
     @Column(name = "member_password")
@@ -29,8 +29,7 @@ public class Member {
     @Column(name = "member_name")
     private String name;
 
-    @OneToMany(mappedBy = "member")
-    private List<MemberAuthority> authority;
+
 
     @OneToMany(mappedBy = "member")
     private List<MemberStatus> statuses;

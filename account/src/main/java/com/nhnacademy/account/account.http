@@ -1,4 +1,6 @@
-###
+
+
+### 멤버회원가입
 POST http://localhost:8080/accounts/signup
 Content-Type: application/json
 
@@ -23,7 +25,7 @@ Content-Type: application/json
 
 
 
-###
+### 해당정보 존재하면 로그인
 GET http://localhost:8080/accounts/login
 Content-Type: application/json
 
@@ -32,7 +34,7 @@ Content-Type: application/json
   "password": "1234"
 }
 
-###
+### 해당 이메일 존재하면 이메일로 로그인
 GET http://localhost:8080/accounts/login/email
 Content-Type: application/json
 
@@ -40,12 +42,12 @@ Content-Type: application/json
   "email": "user1@mail.com"
 }
 
-###
+### 멤버리스트 조회
 GET http://localhost:8080/accounts
 
 
-###
+### 멤버조회
 GET http://localhost:8080/accounts/1
 
-###
+### 멤버삭제
 DELETE http://localhost:8080/accounts/1

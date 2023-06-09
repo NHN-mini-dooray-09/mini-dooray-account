@@ -35,20 +35,20 @@ class MemberServiceTest {
     @Test
     @Order(1)
     void testFindByIdAndPassword(){
-        Member testmember=new Member(5L,"test5","test5@mail.com","1234","testUser5");
+        Member testmember=new Member(1L,"test1","test1@mail.com","1234","testUser");
         entityManager.merge(testmember);
 
-        Member member=memberRepository.findByIdAndPassword("test5","1234");
+        Member member=memberRepository.findByIdAndPassword("test1","1234");
         Assertions.assertThat(member).isEqualTo(testmember);
     }
 
     @Test
     @Order(2)
     void findByEmail(){
-        Member testmember=new Member(6L,"test6","test6@mail.com","1234","testUser6");
+        Member testmember=new Member(2L,"test2","test2@mail.com","1234","testUser2");
         entityManager.merge(testmember);
 
-        Member member=memberRepository.findByEmail("test6@mail.com");
+        Member member=memberRepository.findByEmail("test2@mail.com");
         Assertions.assertThat(member).isEqualTo(testmember);
     }
 }

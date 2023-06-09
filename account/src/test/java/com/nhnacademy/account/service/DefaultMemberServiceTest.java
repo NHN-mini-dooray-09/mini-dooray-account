@@ -66,7 +66,7 @@ class DefaultMemberServiceTest {
     @Test
     @Order(5)
     void testGetMember(){
-        Member member=new Member(3L,"test3","test3@mail.com","1234","testUser3");
+        Member member=new Member(1L,"test3","test3@mail.com","1234","testUser3");
         memberRepository.save(member);
 
         Member searchMember=memberService.getMember(member.getSeq());
@@ -79,7 +79,7 @@ class DefaultMemberServiceTest {
     @Test
     @Order(6)
     void testDelete(){
-        Member member=new Member(4L,"test4","test4@mail.com","1234","testUser4");
+        Member member=new Member(1L,"test4","test4@mail.com","1234","testUser4");
         memberRepository.save(member);
 
         List<Member> members=memberService.getMembers();
