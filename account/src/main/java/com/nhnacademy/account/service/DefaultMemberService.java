@@ -4,6 +4,7 @@ import com.nhnacademy.account.entity.Member;
 import com.nhnacademy.account.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,7 +27,7 @@ public class DefaultMemberService implements MemberService{
     }
 
     @Override
-    public boolean checkExist(String id, String password) {
+    public boolean checkExist(String id, String password, LocalDateTime time) {
         Member member=memberRepository.findByIdAndPassword(id,password);
         return member != null;
     }
@@ -35,6 +36,20 @@ public class DefaultMemberService implements MemberService{
     public boolean checkEmail(String email) {
         Member member=memberRepository.findByEmail(email);
         return member!=null;
+    }
+
+    @Override
+    public Member dropMember(Long seq) {
+        Member member=memberRepository.findById(seq).orElseThrow();
+        member.setStatusName("탈퇴");
+        return memberRepository.save(member);
+    }
+
+    @Override
+    public Member sleepMember(Long seq) {
+        Member member=memberRepository.findById(seq).orElseThrow();
+        member.setStatusName("휴면");
+        return memberRepository.save(member);
     }
 
     @Override

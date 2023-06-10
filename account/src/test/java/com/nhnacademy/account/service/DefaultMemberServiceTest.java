@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +33,7 @@ class DefaultMemberServiceTest {
     @Test
     @Order(1)
     void teatCreateMember(){
-        Member testmember=new Member(2L,"test2","test2@mail.com","1234","testUser2");
+        Member testmember=new Member(2L,"test2","test2@mail.com","1234","testUser2","가입",LocalDateTime.now());
         memberRepository.save(testmember);
     }
     @Test
@@ -47,7 +49,7 @@ class DefaultMemberServiceTest {
         String id="test";
         String password="1234";
 
-        boolean exists=memberService.checkExist(id,password);
+        boolean exists=memberService.checkExist(id,password,LocalDateTime.now());
 
         Assertions.assertThat(exists);
     }
@@ -66,7 +68,7 @@ class DefaultMemberServiceTest {
     @Test
     @Order(5)
     void testGetMember(){
-        Member member=new Member(1L,"test3","test3@mail.com","1234","testUser3");
+        Member member=new Member(1L,"test3","test3@mail.com","1234","testUser3","가입", LocalDateTime.now());
         memberRepository.save(member);
 
         Member searchMember=memberService.getMember(member.getSeq());
@@ -79,7 +81,7 @@ class DefaultMemberServiceTest {
     @Test
     @Order(6)
     void testDelete(){
-        Member member=new Member(1L,"test4","test4@mail.com","1234","testUser4");
+        Member member=new Member(1L,"test4","test4@mail.com","1234","testUser4","가입",LocalDateTime.now());
         memberRepository.save(member);
 
         List<Member> members=memberService.getMembers();

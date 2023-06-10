@@ -2,6 +2,7 @@ package com.nhnacademy.account.service;
 
 import com.nhnacademy.account.entity.Member;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MemberService {
@@ -14,7 +15,12 @@ public interface MemberService {
 
     void deleteMember(Long seq);
 
-    boolean checkExist(String id,String password);
+    boolean checkExist(String id, String password, LocalDateTime time);
 
     boolean checkEmail(String email);
+
+    Member dropMember(Long seq);
+
+    Member sleepMember(Long seq);
+
 }

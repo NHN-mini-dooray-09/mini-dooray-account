@@ -17,6 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -35,7 +38,7 @@ class MemberServiceTest {
     @Test
     @Order(1)
     void testFindByIdAndPassword(){
-        Member testmember=new Member(1L,"test1","test1@mail.com","1234","testUser");
+        Member testmember=new Member(1L,"test1","test1@mail.com","1234","testUser","가입", LocalDateTime.now());
         entityManager.merge(testmember);
 
         Member member=memberRepository.findByIdAndPassword("test1","1234");
@@ -45,7 +48,7 @@ class MemberServiceTest {
     @Test
     @Order(2)
     void findByEmail(){
-        Member testmember=new Member(2L,"test2","test2@mail.com","1234","testUser2");
+        Member testmember=new Member(2L,"test2","test2@mail.com","1234","testUser2","가입",LocalDateTime.now());
         entityManager.merge(testmember);
 
         Member member=memberRepository.findByEmail("test2@mail.com");

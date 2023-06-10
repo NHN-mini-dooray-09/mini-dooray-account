@@ -1,6 +1,7 @@
 package com.nhnacademy.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.account.AccountApplication;
 import com.nhnacademy.account.domain.LoginDto;
 import com.nhnacademy.account.entity.Member;
@@ -14,6 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,7 +38,8 @@ class MemberControllerTest {
     @Order(1)
     void testCreateMember()throws Exception{
         ObjectMapper mapper=new ObjectMapper();
-        Member member=new Member(1L,"test","test@mail.com","1234","testUser");
+        mapper.registerModule(new JavaTimeModule());
+        Member member=new Member(1L,"test","test@mail.com","1234","testUser","가입", LocalDateTime.now());
         mockMvc.perform(post("/accounts/signup")
                         .content(mapper.writeValueAsString(member))
                         .contentType(MediaType.APPLICATION_JSON))

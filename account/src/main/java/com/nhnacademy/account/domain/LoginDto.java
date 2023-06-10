@@ -2,6 +2,10 @@ package com.nhnacademy.account.domain;
 
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Data
 public class LoginDto {
 
@@ -9,6 +13,8 @@ public class LoginDto {
     private String password;
 
     private String email;
+
+    private LocalDate date;
 
 
     public LoginDto(String id, String password) {

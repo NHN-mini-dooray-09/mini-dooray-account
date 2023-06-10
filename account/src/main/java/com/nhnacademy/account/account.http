@@ -6,10 +6,11 @@ Content-Type: application/json
 
 
   {
-  "id": "user1",
-  "password": "1234",
-  "email": "user1@mail.com",
-  "name": "유저1"
+    "id": "user1",
+    "password": "1234",
+    "email": "user1@mail.com",
+    "name": "유저1",
+    "statusName": "가입"
   }
 ###
 POST http://localhost:8080/accounts/signup
@@ -20,7 +21,8 @@ Content-Type: application/json
   "id": "user2",
   "password": "5678",
   "email": "user2@mail.com",
-  "name": "유저2"
+  "name": "유저2",
+  "statusName":"가입"
 }
 
 
@@ -41,6 +43,12 @@ Content-Type: application/json
 {
   "email": "user1@mail.com"
 }
+
+
+### 탈퇴했을시 상태를 탈퇴로 변경
+POST http://localhost:8080/accounts/drop/1
+Content-Type: application/json
+
 
 ### 멤버리스트 조회
 GET http://localhost:8080/accounts
