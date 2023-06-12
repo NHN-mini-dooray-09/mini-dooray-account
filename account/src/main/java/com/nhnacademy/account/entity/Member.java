@@ -9,8 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Getter
-@Setter
-@EqualsAndHashCode
+@NoArgsConstructor
 @Entity
 @Table(name = "Members")
 public class Member {
@@ -18,7 +17,7 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_seq")
-    private Long seq;
+    private Long memberSeq;
 
     @Column(name = "member_id",unique = true)
     private String id;
@@ -34,23 +33,29 @@ public class Member {
 
 
     @Column(name = "status")
-    private String statusName;
+    private String status;
+
+    @Column(name = "authority")
+    private String role;
 
     @Column(name = "dateTime")
     private LocalDateTime time;
 
-    public Member(){
-
+    @Builder
+    public Member(Long memberSeq,String id,String password,String email,String name,String status,LocalDateTime time,String role){
+        this.memberSeq=memberSeq;
+        this.id=id;
+        this.password=password;
+        this.email=email;
+        this.name=name;
+        this.status=status;
+        this.time=time;
+        this.role=role;
     }
 
-    public Member(Long seq,String id,String email,String password,String name,String statusName,LocalDateTime time){
-        this.seq=seq;
-        this.id=id;
-        this.email=email;
-        this.password=password;
+    public void updateMember(String name,String status){
         this.name=name;
-        this.statusName=statusName;
-        this.time=time;
+        this.status=status;
     }
 
 }

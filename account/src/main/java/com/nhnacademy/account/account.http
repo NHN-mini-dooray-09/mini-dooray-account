@@ -1,16 +1,16 @@
 
 
 ### 멤버회원가입
+# @no-cookie-jar
 POST http://localhost:8080/accounts/signup
 Content-Type: application/json
 
 
   {
-    "id": "user1",
+    "id": "admin1",
     "password": "1234",
-    "email": "user1@mail.com",
-    "name": "유저1",
-    "statusName": "가입"
+    "email": "admin1@mail.com",
+    "name": "관리자1"
   }
 ###
 POST http://localhost:8080/accounts/signup
@@ -18,26 +18,39 @@ Content-Type: application/json
 
 
 {
-  "id": "user2",
+  "id": "user1",
   "password": "5678",
-  "email": "user2@mail.com",
-  "name": "유저2",
-  "statusName":"가입"
+  "email": "user1@mail.com",
+  "name": "유저1"
 }
+
+###
+POST http://localhost:8080/accounts/signup
+Content-Type: application/json
+
+
+{
+  "id": "user2",
+  "password": "9876",
+  "email": "user2@mail.com",
+  "name": "유저2"
+}
+
+
 
 
 
 ### 해당정보 존재하면 로그인
-GET http://localhost:8080/accounts/login
+POST http://localhost:8080/accounts/login
 Content-Type: application/json
 
 {
   "id": "user1",
-  "password": "1234"
+  "password": "5678"
 }
 
 ### 해당 이메일 존재하면 이메일로 로그인
-GET http://localhost:8080/accounts/login/email
+POST http://localhost:8080/accounts/login/email
 Content-Type: application/json
 
 {
@@ -46,16 +59,10 @@ Content-Type: application/json
 
 
 ### 탈퇴했을시 상태를 탈퇴로 변경
-POST http://localhost:8080/accounts/drop/1
+PUT http://localhost:8080/accounts/2/drop
 Content-Type: application/json
 
+### 관리자만 휴면 상태로 변경 가능
+PUT http://localhost:8080/accounts/1/sleep/3
+Content-Type: application/json
 
-### 멤버리스트 조회
-GET http://localhost:8080/accounts
-
-
-### 멤버조회
-GET http://localhost:8080/accounts/1
-
-### 멤버삭제
-DELETE http://localhost:8080/accounts/1
