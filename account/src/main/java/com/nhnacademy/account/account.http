@@ -1,18 +1,6 @@
 
 
 ### 멤버회원가입
-# @no-cookie-jar
-POST http://localhost:8080/accounts/signup
-Content-Type: application/json
-
-
-  {
-    "id": "admin1",
-    "password": "1234",
-    "email": "admin1@mail.com",
-    "name": "관리자1"
-  }
-###
 POST http://localhost:8080/accounts/signup
 Content-Type: application/json
 
@@ -36,11 +24,11 @@ Content-Type: application/json
 }
 
 ###멤버조회
-GET http://localhost:8080/accounts/login/admin1
+GET http://localhost:8080/accounts/login/user1
 Content-Type: application/json
 
 ###이메일 조회
-GET http://localhost:8080/accounts/check/admin1@mail.com
+GET http://localhost:8080/accounts/check/user1@mail.com
 Content-Type: application/json
 
 

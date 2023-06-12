@@ -53,9 +53,22 @@ public class Member {
         this.role=role;
     }
 
+    public Member(String id, String password, String email, String name, String status, String role) {
+        this.id=id;
+        this.password=password;
+        this.email=email;
+        this.name=name;
+        this.status=status;
+        this.role=role;
+    }
+
     public void updateMember(String name,String status){
         this.name=name;
         this.status=status;
+    }
+
+    public void loginTime(LocalDateTime time){
+        this.time=time;
     }
 
 }

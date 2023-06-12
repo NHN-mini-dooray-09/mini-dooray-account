@@ -2,21 +2,16 @@ package com.nhnacademy.account.controller;
 
 
 
-import com.nhnacademy.account.domain.request.CheckEmailDto;
+
 import com.nhnacademy.account.domain.request.CheckIdAndPasswordDto;
 import com.nhnacademy.account.domain.request.CreateMemberDto;
 
-import com.nhnacademy.account.domain.response.EmailCheckDto;
-import com.nhnacademy.account.domain.response.LoginDto;
-import com.nhnacademy.account.domain.response.MemberSeqDto;
+import com.nhnacademy.account.domain.response.*;
 
-import com.nhnacademy.account.domain.response.UpdatedStatusDto;
-import com.nhnacademy.account.entity.Member;
-import com.nhnacademy.account.exception.EmailNotFoundException;
 import com.nhnacademy.account.exception.LoginFailedException;
 import com.nhnacademy.account.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,13 +52,9 @@ public class MemberController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> login(@RequestBody CheckIdAndPasswordDto dto) {
-        try {
-            memberService.login(dto);
-            return ResponseEntity.ok("로그인 성공");
-        }catch (LoginFailedException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        public ResponseEntity<LoginResultDto> login(@RequestBody CheckIdAndPasswordDto dto) {
+            LoginResultDto member=memberService.login(dto);
+            return ResponseEntity.ok(member);
     }
 
 

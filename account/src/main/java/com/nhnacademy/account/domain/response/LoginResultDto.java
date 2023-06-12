@@ -11,15 +11,11 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDto {
+public class LoginResultDto {
 
     @NotBlank
     private String id;
 
     @NotBlank
-    private String password;
-
-
-
-
+    private LocalDateTime loginTime;
 }

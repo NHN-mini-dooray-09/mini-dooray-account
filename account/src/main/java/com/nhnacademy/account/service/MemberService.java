@@ -1,16 +1,12 @@
 package com.nhnacademy.account.service;
 
-import com.nhnacademy.account.domain.request.CheckEmailDto;
+
 import com.nhnacademy.account.domain.request.CheckIdAndPasswordDto;
 import com.nhnacademy.account.domain.request.CreateMemberDto;
 
-import com.nhnacademy.account.domain.response.EmailCheckDto;
-import com.nhnacademy.account.domain.response.LoginDto;
-import com.nhnacademy.account.domain.response.MemberSeqDto;
-import com.nhnacademy.account.domain.response.UpdatedStatusDto;
+import com.nhnacademy.account.domain.response.*;
 import com.nhnacademy.account.entity.Member;
 import com.nhnacademy.account.exception.AuthErrorException;
-import com.nhnacademy.account.exception.EmailNotFoundException;
 import com.nhnacademy.account.exception.FailedFindSeqException;
 import com.nhnacademy.account.exception.LoginFailedException;
 import com.nhnacademy.account.repository.MemberRepository;
@@ -18,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -30,15 +26,14 @@ public class MemberService {
 
     @Transactional
     public MemberSeqDto createMember(CreateMemberDto createMemberDto) {
-        String role= createMemberDto.getId().contains("admin")?"ROLE_ADMIN":"ROLE_USER";
         Member newMember=Member.builder()
                 .id(createMemberDto.getId())
                 .password(createMemberDto.getPassword())
                 .email(createMemberDto.getEmail())
                 .name(createMemberDto.getName())
                 .status("가입")
-                .time(createMemberDto.getTime())
-                .role(role)
+                .time(LocalDateTime.now())
+                .role("ROLE_USER")
                 .build();
 
         Member member=memberRepository.save(newMember);
@@ -64,15 +59,15 @@ public class MemberService {
 
 
     @Transactional
-    public boolean login(CheckIdAndPasswordDto dto)  {
+    public LoginResultDto login(CheckIdAndPasswordDto dto)  {
         Member member=memberRepository.findByIdAndPassword(dto.getId(), dto.getPassword());
         if (member == null){
             throw new LoginFailedException("400 error: ID나 패스워드가 일치하지 않습니다.");
         }
-        return true;
+        member.loginTime(LocalDateTime.now());
+        memberRepository.save(member);
+        return new LoginResultDto(member.getId(),LocalDateTime.now());
     }
-
-
 
     @Transactional
     public UpdatedStatusDto dropMember(Long memberSeq){
