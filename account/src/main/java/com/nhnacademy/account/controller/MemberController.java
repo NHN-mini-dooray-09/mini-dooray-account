@@ -6,6 +6,7 @@ import com.nhnacademy.account.domain.request.CheckEmailDto;
 import com.nhnacademy.account.domain.request.CheckIdAndPasswordDto;
 import com.nhnacademy.account.domain.request.CreateMemberDto;
 
+import com.nhnacademy.account.domain.response.LoginDto;
 import com.nhnacademy.account.domain.response.MemberSeqDto;
 
 import com.nhnacademy.account.domain.response.UpdatedStatusDto;
@@ -36,6 +37,15 @@ public class MemberController {
         MemberSeqDto memberSeqDto=memberService.createMember(createMemberDto);
         return ResponseEntity.ok(memberSeqDto);
     }
+
+    @GetMapping("/loginId/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<LoginDto> resultLogin(@PathVariable String id){
+        LoginDto member=memberService.resultLogin(id);
+        return ResponseEntity.ok(member);
+    }
+
+
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
@@ -70,6 +80,8 @@ public class MemberController {
         UpdatedStatusDto updatedStatusDto=memberService.sleepMember(adminSeq,memberSeq);
         return ResponseEntity.ok(updatedStatusDto);
     }
+
+
 
 
 

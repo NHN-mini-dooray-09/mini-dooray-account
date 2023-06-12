@@ -3,9 +3,12 @@ package com.nhnacademy.account.service;
 import com.nhnacademy.account.domain.request.CheckEmailDto;
 import com.nhnacademy.account.domain.request.CheckIdAndPasswordDto;
 import com.nhnacademy.account.domain.request.CreateMemberDto;
+import com.nhnacademy.account.domain.response.CurrentStatusDto;
+import com.nhnacademy.account.domain.response.LoginDto;
 import com.nhnacademy.account.domain.response.MemberSeqDto;
 import com.nhnacademy.account.domain.response.UpdatedStatusDto;
 import com.nhnacademy.account.entity.Member;
+import com.nhnacademy.account.exception.AuthErrorException;
 import com.nhnacademy.account.exception.EmailNotFoundException;
 import com.nhnacademy.account.exception.FailedFindSeqException;
 import com.nhnacademy.account.exception.LoginFailedException;
@@ -41,6 +44,16 @@ public class MemberService {
         return new MemberSeqDto(member.getMemberSeq());
     }
 
+
+    public LoginDto resultLogin(String id){
+        Member member=memberRepository.findById(id);
+        if (member!=null){
+            return new LoginDto(member.getId(),member.getPassword());
+        }
+        return new LoginDto();
+    }
+
+
     @Transactional
     public boolean login(CheckIdAndPasswordDto dto)  {
         Member member=memberRepository.findByIdAndPassword(dto.getId(), dto.getPassword());
@@ -49,6 +62,7 @@ public class MemberService {
         }
         return true;
     }
+
 
 
     @Transactional
@@ -63,7 +77,7 @@ public class MemberService {
     @Transactional
     public UpdatedStatusDto dropMember(Long memberSeq){
         Member member=memberRepository.findById(memberSeq)
-                .orElseThrow(()->new RuntimeException("Member not found"+memberSeq));
+                .orElseThrow(()->new FailedFindSeqException("Member not found"+memberSeq));
         member.updateMember("탈퇴한 유저입니다.","탈퇴");
 
         return new UpdatedStatusDto(member.getName(),member.getStatus());
@@ -72,15 +86,17 @@ public class MemberService {
     @Transactional
     public UpdatedStatusDto sleepMember(Long adminSeq,Long memberSeq){
         Member admin=memberRepository.findById(adminSeq)
-                .orElseThrow(()->new RuntimeException("Admin not found:" + adminSeq));
+                .orElseThrow(()->new FailedFindSeqException("Admin not found:" + adminSeq));
         if (!admin.getRole().equals("ROLE_ADMIN")){
-            throw new RuntimeException("관리자만 휴면 상태로 변경 가능합니다.");
+            throw new AuthErrorException("관리자만 휴면 상태로 변경 가능합니다.");
         }
         Member member=memberRepository.findById(memberSeq)
-                .orElseThrow(()->new RuntimeException("Member not found:" + memberSeq));
+                .orElseThrow(()->new FailedFindSeqException("Member not found:" + memberSeq));
         member.updateMember("휴면 유저입니다.","휴면");
         return new UpdatedStatusDto(member.getName(),member.getStatus());
     }
+
+
 
 //    @Override
 //    public Member dropMember(Long seq) {
