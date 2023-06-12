@@ -6,6 +6,7 @@ import com.nhnacademy.account.domain.request.CheckEmailDto;
 import com.nhnacademy.account.domain.request.CheckIdAndPasswordDto;
 import com.nhnacademy.account.domain.request.CreateMemberDto;
 
+import com.nhnacademy.account.domain.response.EmailCheckDto;
 import com.nhnacademy.account.domain.response.LoginDto;
 import com.nhnacademy.account.domain.response.MemberSeqDto;
 
@@ -38,10 +39,17 @@ public class MemberController {
         return ResponseEntity.ok(memberSeqDto);
     }
 
-    @GetMapping("/loginId/{id}")
+    @GetMapping("/login/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<LoginDto> resultLogin(@PathVariable String id){
         LoginDto member=memberService.resultLogin(id);
+        return ResponseEntity.ok(member);
+    }
+
+    @GetMapping("/check/{email}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<EmailCheckDto> emailCheck(@PathVariable String email){
+        EmailCheckDto member=memberService.emailCheck(email);
         return ResponseEntity.ok(member);
     }
 
@@ -58,16 +66,6 @@ public class MemberController {
         }
     }
 
-
-    @PostMapping("/login/email")
-    public ResponseEntity<String> emailLogin(@RequestBody CheckEmailDto dto){
-      try {
-          memberService.emailLogin(dto);
-          return ResponseEntity.ok("로그인 성공");
-      }catch (EmailNotFoundException e){
-          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-      }
-    }
 
     @PutMapping("/{seq}/drop")
     public ResponseEntity<UpdatedStatusDto> dropMember(@PathVariable Long seq){

@@ -36,7 +36,11 @@ Content-Type: application/json
 }
 
 ###멤버조회
-GET http://localhost:8080/accounts/loginId/user1
+GET http://localhost:8080/accounts/login/admin1
+Content-Type: application/json
+
+###이메일 조회
+GET http://localhost:8080/accounts/check/admin1@mail.com
 Content-Type: application/json
 
 
@@ -47,14 +51,6 @@ Content-Type: application/json
 {
   "id": "user1",
   "password": "5678"
-}
-
-### 해당 이메일 존재하면 이메일로 로그인
-POST http://localhost:8080/accounts/login/email
-Content-Type: application/json
-
-{
-  "email": "user1@mail.com"
 }
 
 
