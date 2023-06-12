@@ -8,7 +8,6 @@ import com.nhnacademy.account.domain.request.CreateMemberDto;
 
 import com.nhnacademy.account.domain.response.*;
 
-import com.nhnacademy.account.exception.LoginFailedException;
 import com.nhnacademy.account.service.MemberService;
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.login.LoginException;
 
 @RestController
 @RequiredArgsConstructor

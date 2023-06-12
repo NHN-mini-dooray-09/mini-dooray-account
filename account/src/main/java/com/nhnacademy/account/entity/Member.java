@@ -39,10 +39,10 @@ public class Member {
     private String role;
 
     @Column(name = "dateTime")
-    private LocalDateTime time;
+    private LocalDate time;
 
     @Builder
-    public Member(Long memberSeq,String id,String password,String email,String name,String status,LocalDateTime time,String role){
+    public Member(Long memberSeq,String id,String password,String email,String name,String status,LocalDate time,String role){
         this.memberSeq=memberSeq;
         this.id=id;
         this.password=password;
@@ -67,7 +67,7 @@ public class Member {
         this.status=status;
     }
 
-    public void loginTime(LocalDateTime time){
+    public void loginTime(LocalDate time){
         this.time=time;
     }
 

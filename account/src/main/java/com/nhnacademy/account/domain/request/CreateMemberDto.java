@@ -33,6 +33,6 @@ public class CreateMemberDto {
 
     @NotBlank
     private String role;
-    private LocalDateTime time;
+    private LocalDate time;
 
 }

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -32,7 +33,7 @@ public class MemberService {
                 .email(createMemberDto.getEmail())
                 .name(createMemberDto.getName())
                 .status("가입")
-                .time(LocalDateTime.now())
+                .time(LocalDate.now())
                 .role("ROLE_USER")
                 .build();
 
@@ -62,11 +63,11 @@ public class MemberService {
     public LoginResultDto login(CheckIdAndPasswordDto dto)  {
         Member member=memberRepository.findByIdAndPassword(dto.getId(), dto.getPassword());
         if (member == null){
-            throw new LoginFailedException("400 error: ID나 패스워드가 일치하지 않습니다.");
+            throw new LoginFailedException();
         }
-        member.loginTime(LocalDateTime.now());
+        member.loginTime(LocalDate.now());
         memberRepository.save(member);
-        return new LoginResultDto(member.getId(),LocalDateTime.now());
+        return new LoginResultDto(member.getId(),LocalDate.now());
     }
 
     @Transactional
@@ -90,26 +91,5 @@ public class MemberService {
         member.updateMember("휴면 유저입니다.","휴면");
         return new UpdatedStatusDto(member.getName(),member.getStatus());
     }
-
-
-
-//    @Override
-//    public Member dropMember(Long seq) {
-//        Member member=memberRepository.findById(seq).orElseThrow();
-//        member.setStatusName("탈퇴");
-//        return memberRepository.save(member);
-//    }
-//
-//    @Override
-//    public Member sleepMember(Long seq) {
-//        Member member=memberRepository.findById(seq).orElseThrow();
-//        member.setStatusName("휴면");
-//        return memberRepository.save(member);
-//    }
-//
-//    @Override
-//    public Member getMember(Long seq) {
-//        return memberRepository.findById(seq).orElseThrow();
-//    }
 
 }
