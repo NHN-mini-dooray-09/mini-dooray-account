@@ -30,6 +30,7 @@ public class MemberService {
 
     @Transactional
     public MemberSeqDto createMember(CreateMemberDto createMemberDto) {
+        String role=memberRepository.count()==0? "ROLE_ADMIN":"ROLE_USER";
         Member newMember=Member.builder()
                 .id(createMemberDto.getId())
                 .password(createMemberDto.getPassword())
@@ -37,7 +38,7 @@ public class MemberService {
                 .name(createMemberDto.getName())
                 .status("가입")
                 .time(LocalDate.now())
-                .role("ROLE_USER")
+                .role(role)
                 .build();
 
         Member member=memberRepository.save(newMember);
