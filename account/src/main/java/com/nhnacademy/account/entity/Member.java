@@ -42,8 +42,8 @@ public class Member {
     private LocalDate time;
 
     @Builder
-    public Member(Long memberSeq,String id,String password,String email,String name,String status,LocalDate time,String role){
-        this.memberSeq=memberSeq;
+    public Member(String id,String password,String email,String name,String status,LocalDate time,String role){
+
         this.id=id;
         this.password=password;
         this.email=email;

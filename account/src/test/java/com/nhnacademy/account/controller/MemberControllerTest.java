@@ -6,10 +6,6 @@ import com.nhnacademy.account.domain.request.CreateMemberDto;
 import com.nhnacademy.account.domain.response.EmailCheckDto;
 import com.nhnacademy.account.domain.response.LoginDto;
 
-import com.nhnacademy.account.domain.response.MemberSeqDto;
-import com.nhnacademy.account.entity.Member;
-import com.nhnacademy.account.repository.MemberRepository;
-import com.nhnacademy.account.service.MemberService;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -17,14 +13,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.spring5.util.FieldUtils;
-
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

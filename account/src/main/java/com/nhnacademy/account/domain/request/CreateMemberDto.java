@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 public class CreateMemberDto {
 
+
     @NotBlank
     private String id;
 

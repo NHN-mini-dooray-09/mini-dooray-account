@@ -74,14 +74,14 @@ public class MemberService {
         return new LoginResultDto(member.getId(),LocalDate.now());
     }
 
-    @Transactional
-    public UpdatedStatusDto dropMember(Long memberSeq){
-        Member member=memberRepository.findById(memberSeq)
-                .orElseThrow(()->new FailedFindSeqException("Member not found"+memberSeq));
-        member.updateMember("탈퇴한 유저입니다.","탈퇴");
+        @Transactional
+        public UpdatedStatusDto dropMember(Long memberSeq){
+            Member member=memberRepository.findById(memberSeq)
+                    .orElseThrow(()->new FailedFindSeqException("Member not found" + memberSeq));
+            member.updateMember("탈퇴한 유저입니다.","탈퇴");
 
-        return new UpdatedStatusDto(member.getName(),member.getStatus());
-    }
+            return new UpdatedStatusDto(member.getName(),member.getStatus());
+        }
 
     @Transactional
     public UpdatedStatusDto sleepMember(Long adminSeq,Long memberSeq){

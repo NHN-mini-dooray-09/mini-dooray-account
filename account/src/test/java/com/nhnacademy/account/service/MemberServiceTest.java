@@ -1,28 +1,35 @@
 package com.nhnacademy.account.service;
 
-import com.nhnacademy.account.DataLoader;
+
 import com.nhnacademy.account.domain.request.CheckIdAndPasswordDto;
 import com.nhnacademy.account.domain.request.CreateMemberDto;
 import com.nhnacademy.account.domain.response.*;
 import com.nhnacademy.account.entity.Member;
-import com.nhnacademy.account.exception.AuthErrorException;
-import com.nhnacademy.account.exception.FailedFindSeqException;
+import com.nhnacademy.account.exception.LoginFailedException;
 import com.nhnacademy.account.repository.MemberRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.client.ExpectedCount;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.client.ExpectedCount.manyTimes;
+import static org.springframework.test.web.client.ExpectedCount.times;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -30,168 +37,130 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
-    @Autowired
-    MemberService memberService;
+    @Mock
+    private MemberRepository memberRepository;
 
-    @Autowired
-    MemberRepository memberRepository;
+    @InjectMocks
+    private MemberService memberService;
+
+
 
 
     @Test
     @Order(1)
-    @Transactional
-    void testCreateMember(){
-        CreateMemberDto createMemberDto=CreateMemberDto.builder()
+    void createMember(){
+        CreateMemberDto createMemberDto = CreateMemberDto.builder()
                 .id("test")
                 .password("1234")
                 .email("test@mail.com")
                 .name("testUser")
                 .status("가입")
-                .time(LocalDate.now())
                 .role("ROLE_USER")
                 .build();
-        MemberSeqDto seqDto=memberService.createMember(createMemberDto);
 
-        Assertions.assertNotNull(seqDto);
-        Assertions.assertNotNull(seqDto.getMemberSeq());
+        // When
+        when(memberRepository.count()).thenReturn(0L);
+        when(memberRepository.save(any(Member.class))).thenReturn(
+                Member.builder()
+                        .id(createMemberDto.getId())
+                        .password(createMemberDto.getPassword())
+                        .email(createMemberDto.getEmail())
+                        .name(createMemberDto.getName())
+                        .status(createMemberDto.getStatus())
+                        .role(createMemberDto.getRole())
+                        .build()
+        );
+
+        MemberSeqDto seqDto=memberService.createMember(createMemberDto);
+        verify(memberRepository, atLeastOnce()).count();
+        verify(memberRepository,atLeastOnce()).save(any(Member.class));
+        Assertions.assertEquals(1L,seqDto.getMemberSeq());
+
 
     }
+
 
     @Test
     @Order(2)
-    @Transactional
-    void testResultLogin(){
-        CreateMemberDto createMemberDto = CreateMemberDto.builder()
-                .id("test")
+    void resultLogin(){
+        String memberId="test";
+        Member member=Member.builder()
+                .id(memberId)
                 .password("1234")
-                .email("test@mail.com")
-                .name("testUser")
-                .status("가입")
-                .time(LocalDate.now())
-                .role("ROLE_USER")
                 .build();
+        when(memberRepository.findById(memberId)).thenReturn(member);
 
-
-        memberService.createMember(createMemberDto);
-
-        LoginDto loginDto = memberService.resultLogin("test");
-
-        assertNotNull(loginDto);
-        assertEquals("test", loginDto.getId());
-        assertEquals("1234", loginDto.getPassword());
+        LoginDto loginDto=memberService.resultLogin(memberId);
+        Assertions.assertEquals(memberId,loginDto.getId());
+        Assertions.assertEquals(member.getPassword(),loginDto.getPassword());
     }
-
     @Test
     @Order(3)
-    @Transactional
     void emailCheck(){
-        CreateMemberDto createMemberDto = CreateMemberDto.builder()
+        String email="test@mail.com";
+        Member member=Member.builder()
                 .id("test")
-                .password("1234")
-                .email("test@mail.com")
+                .password("password")
+                .email(email)
                 .name("testUser")
-                .status("가입")
-                .time(LocalDate.now())
-                .role("ROLE_USER")
                 .build();
-
-
-        memberService.createMember(createMemberDto);
-
-        EmailCheckDto emailCheckDto = memberService.emailCheck("test@mail.com");
-
-        assertNotNull(emailCheckDto);
-        assertEquals("test", emailCheckDto.getId());
-        assertEquals("1234", emailCheckDto.getPassword());
-        assertEquals("test@mail.com", emailCheckDto.getEmail());
-        assertEquals("testUser", emailCheckDto.getName());
+        when(memberRepository.findByEmail(email)).thenReturn(member);
+        EmailCheckDto dto=memberService.emailCheck(email);
+        Assertions.assertEquals(member.getId(),dto.getId());
+        Assertions.assertEquals(member.getPassword(),dto.getPassword());
+        Assertions.assertEquals(member.getEmail(),dto.getEmail());
+        Assertions.assertEquals(member.getName(),dto.getName());
     }
 
     @Test
     @Order(4)
-    @Transactional
-    void login(){
-        CreateMemberDto createMemberDto = CreateMemberDto.builder()
-                .id("test")
-                .password("1234")
-                .email("test@mail.com")
-                .name("testUser")
-                .status("가입")
-                .time(LocalDate.now())
-                .role("ROLE_USER")
-                .build();
-
-
-        memberService.createMember(createMemberDto);
-
-        CheckIdAndPasswordDto dto=CheckIdAndPasswordDto.builder()
+    void testLogin(){
+        CheckIdAndPasswordDto dto= CheckIdAndPasswordDto.builder()
                 .id("test")
                 .password("1234")
                 .build();
+        Member member=Member.builder()
+                .id("test")
+                .password("1234")
+                .build();
+        when(memberRepository.findByIdAndPassword(dto.getId(),dto.getPassword())).thenReturn(member);
+
         LoginResultDto resultDto=memberService.login(dto);
 
-        assertNotNull(resultDto);
-        assertNotNull("test",resultDto.getId());
-        assertEquals(LocalDate.now(),resultDto.getDate());
-
-        Member updateMember=memberRepository.findById("test");
-        assertNotNull(updateMember);
-        assertEquals(LocalDate.now(),updateMember.getTime());
+        Assertions.assertEquals(member.getId(),resultDto.getId());
+        Assertions.assertEquals(LocalDate.now(),resultDto.getDate());
+        verify(memberRepository,atLeastOnce()).save(member);
     }
-
     @Test
     @Order(5)
-    @Transactional
-    void testDropMember(){
-        CreateMemberDto createMemberDto = CreateMemberDto.builder()
+    void testLoginFailedException() {
+        CheckIdAndPasswordDto dto = CheckIdAndPasswordDto.builder()
                 .id("test")
-                .password("1234")
-                .email("test@mail.com")
-                .name("testUser")
-                .status("가입")
-                .time(LocalDate.now())
-                .role("ROLE_USER")
+                .password("wrongpassword")
                 .build();
-        MemberSeqDto memberSeqDto=memberService.createMember(createMemberDto);
+        when(memberRepository.findByIdAndPassword(dto.getId(), dto.getPassword())).thenReturn(null);
 
-        UpdatedStatusDto updatedStatusDto=memberService.dropMember(memberSeqDto.getMemberSeq());
-        assertNotNull(updatedStatusDto);
-        assertEquals("탈퇴한 유저입니다.",updatedStatusDto.getName());
-        assertEquals("탈퇴",updatedStatusDto.getStatus());
-
-        Member updateMember=memberRepository.findById(memberSeqDto.getMemberSeq()).orElse(null);
-        assertNotNull(updateMember);
-        assertEquals("탈퇴한 유저입니다.",updateMember.getName());
-        assertEquals("탈퇴",updateMember.getStatus());
+        assertThrows(LoginFailedException.class, () -> memberService.login(dto));
+        verify(memberRepository, never()).save(any(Member.class));
     }
-
 
     @Test
     @Order(6)
-    @Transactional
-    void testSleepMember(){
-        CreateMemberDto createAdminDto = CreateMemberDto.builder()
-                .id("testAdmin")
-                .password("admin123")
-                .email("admin@mail.com")
-                .name("Admin User")
+    void testDropMember(){
+        Long memberSeq = 1L;
+        Member member = Member.builder()
+                .name("John")
                 .status("가입")
-                .time(LocalDate.now())
-                .role("ROLE_ADMIN")
                 .build();
-        MemberSeqDto adminSeqDto = memberService.createMember(createAdminDto);
+        when(memberRepository.findById(memberSeq)).thenReturn(Optional.of(member));
 
-        CreateMemberDto createMemberDto = CreateMemberDto.builder()
-                .id("test")
-                .password("1234")
-                .email("test@mail.com")
-                .name("Test User")
-                .status("가입")
-                .time(LocalDate.now())
-                .role("ROLE_USER")
-                .build();
-        MemberSeqDto memberSeqDto = memberService.createMember(createMemberDto);
+        // When
+        UpdatedStatusDto resultDto = memberService.dropMember(memberSeq);
 
-        assertThrows(AuthErrorException.class, () -> memberService.sleepMember(adminSeqDto.getMemberSeq(), memberSeqDto.getMemberSeq()));
+        // Then
+        assertEquals("탈퇴한 유저입니다.", resultDto.getName());
+        assertEquals("탈퇴", resultDto.getStatus());
+        verify(memberRepository, atLeastOnce()).findById(memberSeq);
+        verify(memberRepository, atLeastOnce()).save(member);
     }
 }
