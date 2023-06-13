@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,4 +95,22 @@ public class MemberService {
         return new UpdatedStatusDto(member.getName(),member.getStatus());
     }
 
+    public List<GetMembersDto> getMembers(String id){
+        Member thismember=memberRepository.findById(id);
+
+        List<Member>members=memberRepository.findAllByIdNot(thismember.getId());
+        List<GetMembersDto>getMembersDtoList=new ArrayList<>();
+
+        for (Member member:members){
+            if (!member.getRole().equals("ROLE_ADMIN")){
+                GetMembersDto dto=new GetMembersDto(
+                        member.getId(),
+                        member.getName(),
+                        member.getStatus()
+                );
+                getMembersDtoList.add(dto);
+            }
+        }
+        return getMembersDtoList;
+    }
 }

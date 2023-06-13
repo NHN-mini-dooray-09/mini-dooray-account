@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -68,29 +70,9 @@ public class MemberController {
         return ResponseEntity.ok(updatedStatusDto);
     }
 
-
-
-
-
-//    @PostMapping("/accounts/drop/{seq}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Member dropMember(@PathVariable Long seq){
-//        return memberService.dropMember(seq);
-//    }
-//
-//    @PostMapping("account/sleep/{sep}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Member sleepMember(@PathVariable Long sep){
-//        return memberService.sleepMember(sep);
-//    }
-//
-//    @GetMapping("/accounts")
-//    public List<Member> getMembers(){
-//        return memberService.getMembers();
-//    }
-//
-//    @GetMapping("/accounts/{seq}")
-//    public Member getMember(@PathVariable Long seq){
-//        return memberService.getMember(seq);
-//    }
+    @GetMapping("/members/{id}")
+    public ResponseEntity<List<GetMembersDto>> getMembers(@PathVariable String id){
+        List<GetMembersDto> members=memberService.getMembers(id);
+        return ResponseEntity.ok(members);
+    }
 }

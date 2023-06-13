@@ -163,40 +163,32 @@ class MemberServiceTest {
     }
 
 
-//    @Test
-//    @Order(6)
-//    @Transactional
-//    void testSleepMember(){
-//        CreateMemberDto createAdminDto = CreateMemberDto.builder()
-//                .id("testAdmin")
-//                .password("admin1234")
-//                .email("admin@mail.com")
-//                .name("Admin")
-//                .status("가입")
-//                .time(LocalDate.now())
-//                .role("ROLE_ADMIN")
-//                .build();
-//        MemberSeqDto adminSeqDto = memberService.createMember(createAdminDto);
-//
-//        CreateMemberDto createMemberDto = CreateMemberDto.builder()
-//                .id("test")
-//                .password("1234")
-//                .email("test@mail.com")
-//                .name("testUser")
-//                .status("가입")
-//                .time(LocalDate.now())
-//                .role("ROLE_USER")
-//                .build();
-//        MemberSeqDto memberSeqDto = memberService.createMember(createMemberDto);
-//
-//        UpdatedStatusDto updatedStatusDto = memberService.sleepMember(adminSeqDto.getMemberSeq(), memberSeqDto.getMemberSeq());
-//        assertNotNull(updatedStatusDto);
-//        assertEquals("휴면 유저입니다.", updatedStatusDto.getName());
-//        assertEquals("휴면", updatedStatusDto.getStatus());
-//
-//        Member updateMember = memberRepository.findById(memberSeqDto.getMemberSeq()).orElse(null);
-//        assertNotNull(updateMember);
-//        assertEquals("휴면 유저입니다.", updateMember.getName());
-//        assertEquals("휴면", updateMember.getStatus());
-//    }
+    @Test
+    @Order(6)
+    @Transactional
+    void testSleepMember(){
+        CreateMemberDto createAdminDto = CreateMemberDto.builder()
+                .id("testAdmin")
+                .password("admin123")
+                .email("admin@mail.com")
+                .name("Admin User")
+                .status("가입")
+                .time(LocalDate.now())
+                .role("ROLE_ADMIN")
+                .build();
+        MemberSeqDto adminSeqDto = memberService.createMember(createAdminDto);
+
+        CreateMemberDto createMemberDto = CreateMemberDto.builder()
+                .id("test")
+                .password("1234")
+                .email("test@mail.com")
+                .name("Test User")
+                .status("가입")
+                .time(LocalDate.now())
+                .role("ROLE_USER")
+                .build();
+        MemberSeqDto memberSeqDto = memberService.createMember(createMemberDto);
+
+        assertThrows(AuthErrorException.class, () -> memberService.sleepMember(adminSeqDto.getMemberSeq(), memberSeqDto.getMemberSeq()));
+    }
 }

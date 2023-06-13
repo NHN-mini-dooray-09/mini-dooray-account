@@ -22,6 +22,17 @@ Content-Type: application/json
   "email": "user2@mail.com",
   "name": "유저2"
 }
+###
+POST http://localhost:8080/accounts/signup
+Content-Type: application/json
+
+
+{
+  "id": "user3",
+  "password": "9876",
+  "email": "user3@mail.com",
+  "name": "유저3"
+}
 
 ###멤버조회
 GET http://localhost:8080/accounts/login/user1
@@ -37,10 +48,9 @@ POST http://localhost:8080/accounts/login
 Content-Type: application/json
 
 {
-  "id": "user2",
+  "id": "user1",
   "password": "5678"
 }
-
 
 ### 탈퇴했을시 상태를 탈퇴로 변경
 PUT http://localhost:8080/accounts/2/drop
@@ -50,3 +60,6 @@ Content-Type: application/json
 PUT http://localhost:8080/accounts/1/sleep/3
 Content-Type: application/json
 
+###관리자를 제외한 전체멤버 조회
+GET http://localhost:8080/accounts/members/user1
+Content-Type: application/json
