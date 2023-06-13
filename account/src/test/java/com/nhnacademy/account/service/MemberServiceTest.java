@@ -9,6 +9,8 @@ import com.nhnacademy.account.exception.AuthErrorException;
 import com.nhnacademy.account.exception.FailedFindSeqException;
 import com.nhnacademy.account.repository.MemberRepository;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,9 +24,10 @@ import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles("dev")
+@ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
     @Autowired
