@@ -120,4 +120,7 @@ public class MemberService {
         return memberRepository.existsById(id);
     }
 
+    public boolean checkEmailDuplicate(String email){
+        return memberRepository.existsByEmail(email);
+    }
 }
