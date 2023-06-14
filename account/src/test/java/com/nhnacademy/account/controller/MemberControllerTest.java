@@ -16,19 +16,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 import java.lang.Exception;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -56,6 +53,8 @@ class MemberControllerTest {
                 .password("1234")
                 .email("test@mail.com")
                 .name("testUser")
+                .status("가입")
+                .role("ROLE_USER")
                 .build();
         MemberSeqDto memberSeqDto=MemberSeqDto.builder()
                 .memberSeq(1L)
@@ -67,7 +66,6 @@ class MemberControllerTest {
                 .content(objectMapper.writeValueAsString(createMemberDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberSeq").value(1L));
-
     }
     @Test
     @Order(2)
@@ -148,40 +146,40 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.status").value("탈퇴"));
     }
 
+//    @Test
+//    @Order(6)
+//    void testSleepMember()throws Exception{
+//        Member admin=new Member(
+//                1L
+//                ,"admin"
+//                ,"1234"
+//                ,"admin@mail.com"
+//                ,"testAdmin"
+//                ,"가입"
+//                ,"ROLE_ADMIN"
+//                ,LocalDate.now());
+//        Member user=new Member(
+//                2L
+//                ,"test"
+//                ,"1234"
+//                ,"test@mail.com"
+//                ,"testUser"
+//                ,"가입"
+//                ,"ROLE_USER"
+//                ,LocalDate.now());
+//
+//        when(memberService.sleepMember(admin.getMemberSeq(),user.getMemberSeq()))
+//                .thenReturn(new UpdatedStatusDto("휴면 유저입니다.","휴면"));
+//
+//        mockMvc.perform(put("/accounts/{adminSeq}/sleep/{memberSeq}",admin.getMemberSeq(),user.getMemberSeq())
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.name").value("휴면 유저입니다."))
+//                .andExpect(jsonPath("$.status").value("휴면"));
+//    }
+
     @Test
     @Order(6)
-    void testSleepMember()throws Exception{
-        Member admin=new Member(
-                1L
-                ,"admin"
-                ,"1234"
-                ,"admin@mail.com"
-                ,"testAdmin"
-                ,"가입"
-                ,"ROLE_ADMIN"
-                ,LocalDate.now());
-        Member user=new Member(
-                2L
-                ,"test"
-                ,"1234"
-                ,"test@mail.com"
-                ,"testUser"
-                ,"가입"
-                ,"ROLE_USER"
-                ,LocalDate.now());
-
-        when(memberService.sleepMember(admin.getMemberSeq(),user.getMemberSeq()))
-                .thenReturn(new UpdatedStatusDto("휴면 유저입니다.","휴면"));
-
-        mockMvc.perform(put("/accounts/{adminSeq}/sleep/{memberSeq}",admin.getMemberSeq(),user.getMemberSeq())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("휴면 유저입니다."))
-                .andExpect(jsonPath("$.status").value("휴면"));
-    }
-
-    @Test
-    @Order(7)
     void testGetMemberS()throws Exception{
         Member thisMember = new Member(
                 1L
@@ -213,7 +211,6 @@ class MemberControllerTest {
                 , LocalDate.now()));
         when(memberService.getMembers(any(String.class))).thenReturn(
                 members.stream()
-                        .filter(member -> !member.getRole().equals("ROLE_ADMIN"))
                         .map(member -> new GetMembersDto(member.getId(), member.getName(), member.getStatus()))
                         .collect(Collectors.toList()));
 
@@ -221,10 +218,52 @@ class MemberControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value("user2"))
-                .andExpect(jsonPath("$[0].name").value("사용자2"))
-                .andExpect(jsonPath("[0].status").value("가입"));
+                .andExpect(jsonPath("$[0].id").value("user1"))
+                .andExpect(jsonPath("$[0].name").value("사용자1"))
+                .andExpect(jsonPath("[0].status").value("가입"))
 
+                .andExpect(jsonPath("$[1].id").value("user2"))
+                .andExpect(jsonPath("$[1].name").value("사용자2"))
+                .andExpect(jsonPath("[1].status").value("가입"));
+    }
 
+    @Test
+    @Order(7)
+    void testCheckIdDuplicate()throws Exception{
+        Member member=new Member(
+                1L
+                ,"test"
+                ,"1234"
+                ,"test@mail.com"
+                ,"testUser"
+                ,"가입"
+                ,"ROLE_USER"
+                ,LocalDate.now());
+        when(memberService.checkIdDuplicate(member.getId())).thenReturn(true);
+
+        mockMvc.perform(get("/accounts/checkId/{id}","test"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(true));
+    }
+
+    @Test
+    @Order(8)
+    void testCheckEmailDuplicate()throws Exception{
+        Member member=new Member(
+                1L
+                ,"test"
+                ,"1234"
+                ,"test@mail.com"
+                ,"testUser"
+                ,"가입"
+                ,"ROLE_USER"
+                ,LocalDate.now());
+        when(memberService.checkEmailDuplicate(member.getEmail())).thenReturn(true);
+
+        mockMvc.perform(get("/accounts/checkEmail/{email}","test@mail.com"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(true));
     }
 }

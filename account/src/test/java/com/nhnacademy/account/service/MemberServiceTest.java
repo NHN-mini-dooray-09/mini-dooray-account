@@ -57,7 +57,6 @@ class MemberServiceTest {
                 ,createMemberDto.getStatus()
                 ,createMemberDto.getRole()
                 ,createMemberDto.getTime());
-        when(memberRepository.count()).thenReturn(0L);
         when(memberRepository.save(any(Member.class))).thenReturn(member);
         MemberSeqDto result = memberService.createMember(createMemberDto);
 
@@ -139,41 +138,41 @@ class MemberServiceTest {
         assertEquals("탈퇴",member.getStatus());
     }
 
+//    @Test
+//    @Order(6)
+//    void testSleepMember(){
+//        Long adminSeq=1L;
+//        Long memberSeq=2L;
+//        Member testAdmin=new Member(
+//                adminSeq
+//                ,"admin"
+//                ,"1234"
+//                ,"admin@mail.com"
+//                ,"testAdmin"
+//                ,"가입"
+//                ,"ROLE_ADMIN"
+//                ,LocalDate.now());
+//        Member testUser=new Member(
+//                memberSeq
+//                ,"user"
+//                ,"1234"
+//                ,"user@mail.com"
+//                ,"testUser"
+//                ,"가입"
+//                ,"ROLE_USER"
+//                ,LocalDate.now());
+//        when(memberRepository.findById(adminSeq)).thenReturn(Optional.of(testAdmin));
+//        when(memberRepository.findById(memberSeq)).thenReturn(Optional.of(testUser));
+//
+//        UpdatedStatusDto result=memberService.sleepMember(adminSeq,memberSeq);
+//
+//
+//        assertEquals("휴면 유저입니다.",result.getName());
+//        assertEquals("휴면",result.getStatus());
+//    }
+
     @Test
     @Order(6)
-    void testSleepMember(){
-        Long adminSeq=1L;
-        Long memberSeq=2L;
-        Member testAdmin=new Member(
-                adminSeq
-                ,"admin"
-                ,"1234"
-                ,"admin@mail.com"
-                ,"testAdmin"
-                ,"가입"
-                ,"ROLE_ADMIN"
-                ,LocalDate.now());
-        Member testUser=new Member(
-                memberSeq
-                ,"user"
-                ,"1234"
-                ,"user@mail.com"
-                ,"testUser"
-                ,"가입"
-                ,"ROLE_USER"
-                ,LocalDate.now());
-        when(memberRepository.findById(adminSeq)).thenReturn(Optional.of(testAdmin));
-        when(memberRepository.findById(memberSeq)).thenReturn(Optional.of(testUser));
-
-        UpdatedStatusDto result=memberService.sleepMember(adminSeq,memberSeq);
-
-
-        assertEquals("휴면 유저입니다.",result.getName());
-        assertEquals("휴면",result.getStatus());
-    }
-
-    @Test
-    @Order(7)
     void testGetMembers(){
         Member thisMember = new Member(
                 1L
@@ -209,11 +208,33 @@ class MemberServiceTest {
         List<GetMembersDto> result=memberService.getMembers("test");
 
         assertNotNull(result);
-        assertEquals(1,result.size());
+        assertEquals(2,result.size());
 
         GetMembersDto firstDto=result.get(0);
-        assertEquals("user2",firstDto.getId());
-        assertEquals("사용자2",firstDto.getName());
+        assertEquals("user1",firstDto.getId());
+        assertEquals("사용자1",firstDto.getName());
         assertEquals("가입",firstDto.getStatus());
+    }
+
+    @Test
+    @Order(7)
+    void testCheckIdDuplicate(){
+        String id="test";
+        when(memberRepository.existsById(id)).thenReturn(true);
+
+        boolean result=memberService.checkIdDuplicate(id);
+        assertTrue(result);
+        verify(memberRepository).existsById(id);
+    }
+
+    @Test
+    @Order(8)
+    void testCheckEmailDuplicate(){
+        String email="test@mail.com";
+        when(memberRepository.existsByEmail(email)).thenReturn(true);
+
+        boolean result=memberService.checkEmailDuplicate(email);
+        assertTrue(result);
+        verify(memberRepository).existsByEmail(email);
     }
 }

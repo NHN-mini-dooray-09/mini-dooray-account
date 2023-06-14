@@ -6,7 +6,6 @@ import com.nhnacademy.account.domain.request.CreateMemberDto;
 
 import com.nhnacademy.account.domain.response.*;
 import com.nhnacademy.account.entity.Member;
-import com.nhnacademy.account.exception.AuthErrorException;
 import com.nhnacademy.account.exception.FailedFindSeqException;
 import com.nhnacademy.account.exception.LoginFailedException;
 import com.nhnacademy.account.repository.MemberRepository;
@@ -15,11 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,7 +26,6 @@ public class MemberService {
 
     @Transactional
     public MemberSeqDto createMember(CreateMemberDto createMemberDto) {
-        String role=memberRepository.count()==0? "ROLE_ADMIN":"ROLE_USER";
         Member newMember=Member.builder()
                 .id(createMemberDto.getId())
                 .password(createMemberDto.getPassword())
@@ -38,7 +33,7 @@ public class MemberService {
                 .name(createMemberDto.getName())
                 .status("가입")
                 .time(LocalDate.now())
-                .role(role)
+                .role("ROLE_USER")
                 .build();
 
         Member member=memberRepository.save(newMember);
@@ -84,18 +79,18 @@ public class MemberService {
             return new UpdatedStatusDto(member.getName(),member.getStatus());
         }
 
-    @Transactional
-    public UpdatedStatusDto sleepMember(Long adminSeq,Long memberSeq){
-        Member admin=memberRepository.findById(adminSeq)
-                .orElseThrow(()->new FailedFindSeqException("Admin not found:" + adminSeq));
-        if (!admin.getRole().equals("ROLE_ADMIN")){
-            throw new AuthErrorException("관리자만 휴면 상태로 변경 가능합니다.");
-        }
-        Member member=memberRepository.findById(memberSeq)
-                .orElseThrow(()->new FailedFindSeqException("Member not found:" + memberSeq));
-        member.updateMember("휴면 유저입니다.","휴면");
-        return new UpdatedStatusDto(member.getName(),member.getStatus());
-    }
+//    @Transactional
+//    public UpdatedStatusDto sleepMember(Long adminSeq,Long memberSeq){
+//        Member admin=memberRepository.findById(adminSeq)
+//                .orElseThrow(()->new FailedFindSeqException("Admin not found:" + adminSeq));
+//        if (!admin.getRole().equals("ROLE_ADMIN")){
+//            throw new AuthErrorException("관리자만 휴면 상태로 변경 가능합니다.");
+//        }
+//        Member member=memberRepository.findById(memberSeq)
+//                .orElseThrow(()->new FailedFindSeqException("Member not found:" + memberSeq));
+//        member.updateMember("휴면 유저입니다.","휴면");
+//        return new UpdatedStatusDto(member.getName(),member.getStatus());
+//    }
 
     public List<GetMembersDto> getMembers(String id){
         Member thismember=memberRepository.findById(id);
@@ -104,14 +99,13 @@ public class MemberService {
         List<GetMembersDto>getMembersDtoList=new ArrayList<>();
 
         for (Member member:members){
-            if (!member.getRole().equals("ROLE_ADMIN")){
                 GetMembersDto dto=new GetMembersDto(
                         member.getId(),
                         member.getName(),
                         member.getStatus()
                 );
                 getMembersDtoList.add(dto);
-            }
+
         }
         return getMembersDtoList;
     }
