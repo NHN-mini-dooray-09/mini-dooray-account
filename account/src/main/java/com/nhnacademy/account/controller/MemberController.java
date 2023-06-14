@@ -75,4 +75,10 @@ public class MemberController {
         List<GetMembersDto> members=memberService.getMembers(id);
         return ResponseEntity.ok(members);
     }
+
+    @GetMapping("/checkId/{id}")
+    public ResponseEntity<Boolean> checkIdDuplicate(@PathVariable String id){
+        boolean isDuplicate=memberService.checkIdDuplicate(id);
+        return ResponseEntity.ok(isDuplicate);
+    }
 }

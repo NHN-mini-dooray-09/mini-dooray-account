@@ -63,3 +63,7 @@ Content-Type: application/json
 ###관리자를 제외한 전체멤버 조회
 GET http://localhost:8080/accounts/members/user1
 Content-Type: application/json
+
+###해당 아이디와 중복되는 아이디 확인
+GET http://localhost:8080/accounts/checkId/user1
+Content-Type: application/json

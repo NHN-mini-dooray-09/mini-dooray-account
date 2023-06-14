@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "Members")
+@AllArgsConstructor
 public class Member {
 
     @Id
@@ -52,6 +53,8 @@ public class Member {
         this.time=time;
         this.role=role;
     }
+
+
 
     public Member(String id, String password, String email, String name, String status, String role) {
         this.id=id;

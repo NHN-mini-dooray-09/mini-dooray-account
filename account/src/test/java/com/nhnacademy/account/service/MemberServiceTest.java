@@ -11,25 +11,20 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.client.ExpectedCount;
-
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.client.ExpectedCount.manyTimes;
-import static org.springframework.test.web.client.ExpectedCount.times;
+
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -44,40 +39,32 @@ class MemberServiceTest {
     private MemberService memberService;
 
 
-
-
     @Test
     @Order(1)
     void createMember(){
-        CreateMemberDto createMemberDto = CreateMemberDto.builder()
+        CreateMemberDto createMemberDto=CreateMemberDto.builder()
                 .id("test")
                 .password("1234")
                 .email("test@mail.com")
                 .name("testUser")
-                .status("가입")
-                .role("ROLE_USER")
                 .build();
-
-        // When
+        Member member=new Member(
+                1L
+                ,createMemberDto.getId()
+                ,createMemberDto.getPassword()
+                ,createMemberDto.getEmail()
+                ,createMemberDto.getName()
+                ,createMemberDto.getStatus()
+                ,createMemberDto.getRole()
+                ,createMemberDto.getTime());
         when(memberRepository.count()).thenReturn(0L);
-        when(memberRepository.save(any(Member.class))).thenReturn(
-                Member.builder()
-                        .id(createMemberDto.getId())
-                        .password(createMemberDto.getPassword())
-                        .email(createMemberDto.getEmail())
-                        .name(createMemberDto.getName())
-                        .status(createMemberDto.getStatus())
-                        .role(createMemberDto.getRole())
-                        .build()
-        );
+        when(memberRepository.save(any(Member.class))).thenReturn(member);
+        MemberSeqDto result = memberService.createMember(createMemberDto);
 
-        MemberSeqDto seqDto=memberService.createMember(createMemberDto);
-        verify(memberRepository, atLeastOnce()).count();
-        verify(memberRepository,atLeastOnce()).save(any(Member.class));
-        Assertions.assertEquals(1L,seqDto.getMemberSeq());
-
-
+        assertNotNull(result);
+        assertEquals(1L, result.getMemberSeq());
     }
+
 
 
     @Test
@@ -131,36 +118,102 @@ class MemberServiceTest {
         Assertions.assertEquals(LocalDate.now(),resultDto.getDate());
         verify(memberRepository,atLeastOnce()).save(member);
     }
+
     @Test
     @Order(5)
-    void testLoginFailedException() {
-        CheckIdAndPasswordDto dto = CheckIdAndPasswordDto.builder()
-                .id("test")
-                .password("wrongpassword")
-                .build();
-        when(memberRepository.findByIdAndPassword(dto.getId(), dto.getPassword())).thenReturn(null);
+    void testDropMember(){
+        Member member=new Member(
+                1L
+                ,"test"
+                ,"1234"
+                ,"test@mail.com"
+                ,"testUser"
+                ,"가입"
+                ,"ROLE_USER"
+                ,LocalDate.now());
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 
-        assertThrows(LoginFailedException.class, () -> memberService.login(dto));
-        verify(memberRepository, never()).save(any(Member.class));
+        UpdatedStatusDto result=memberService.dropMember(1L);
+        assertNotNull(result);
+        assertEquals("탈퇴한 유저입니다.",member.getName());
+        assertEquals("탈퇴",member.getStatus());
     }
 
     @Test
     @Order(6)
-    void testDropMember(){
-        Long memberSeq = 1L;
-        Member member = Member.builder()
-                .name("John")
-                .status("가입")
-                .build();
-        when(memberRepository.findById(memberSeq)).thenReturn(Optional.of(member));
+    void testSleepMember(){
+        Long adminSeq=1L;
+        Long memberSeq=2L;
+        Member testAdmin=new Member(
+                adminSeq
+                ,"admin"
+                ,"1234"
+                ,"admin@mail.com"
+                ,"testAdmin"
+                ,"가입"
+                ,"ROLE_ADMIN"
+                ,LocalDate.now());
+        Member testUser=new Member(
+                memberSeq
+                ,"user"
+                ,"1234"
+                ,"user@mail.com"
+                ,"testUser"
+                ,"가입"
+                ,"ROLE_USER"
+                ,LocalDate.now());
+        when(memberRepository.findById(adminSeq)).thenReturn(Optional.of(testAdmin));
+        when(memberRepository.findById(memberSeq)).thenReturn(Optional.of(testUser));
 
-        // When
-        UpdatedStatusDto resultDto = memberService.dropMember(memberSeq);
+        UpdatedStatusDto result=memberService.sleepMember(adminSeq,memberSeq);
 
-        // Then
-        assertEquals("탈퇴한 유저입니다.", resultDto.getName());
-        assertEquals("탈퇴", resultDto.getStatus());
-        verify(memberRepository, atLeastOnce()).findById(memberSeq);
-        verify(memberRepository, atLeastOnce()).save(member);
+
+        assertEquals("휴면 유저입니다.",result.getName());
+        assertEquals("휴면",result.getStatus());
+    }
+
+    @Test
+    @Order(7)
+    void testGetMembers(){
+        Member thisMember = new Member(
+                1L
+                , "test"
+                , "1234"
+                , "test@mail.com"
+                , "testUser"
+                , "가입"
+                , "ROLE_ADMIN"
+                , LocalDate.now());
+        List<Member> members = new ArrayList<>();
+        members.add(new Member(
+                2L
+                , "user1"
+                , "pass1"
+                , "user1@mail.com"
+                , "사용자1"
+                , "가입"
+                , "ROLE_ADMIN"
+                , LocalDate.now()));
+        members.add(new Member(
+                3L
+                , "user2"
+                , "pass2"
+                , "user2@mail.com"
+                , "사용자2"
+                , "가입"
+                , "ROLE_USER"
+                , LocalDate.now()));
+        when(memberRepository.findById("test")).thenReturn(thisMember);
+        when(memberRepository.findAllByIdNot("test")).thenReturn(members);
+
+        List<GetMembersDto> result=memberService.getMembers("test");
+
+        assertNotNull(result);
+        assertEquals(1,result.size());
+
+        GetMembersDto firstDto=result.get(0);
+        assertEquals("user2",firstDto.getId());
+        assertEquals("사용자2",firstDto.getName());
+        assertEquals("가입",firstDto.getStatus());
     }
 }

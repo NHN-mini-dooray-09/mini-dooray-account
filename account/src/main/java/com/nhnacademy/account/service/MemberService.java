@@ -54,6 +54,7 @@ public class MemberService {
         return new LoginDto();
     }
 
+
     public EmailCheckDto emailCheck(String email) {
         Member member=memberRepository.findByEmail(email);
         if (member!=null){
@@ -114,4 +115,9 @@ public class MemberService {
         }
         return getMembersDtoList;
     }
+
+    public boolean checkIdDuplicate(String id){
+        return memberRepository.existsById(id);
+    }
+
 }

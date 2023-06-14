@@ -20,6 +20,4 @@ public class LoginDto {
     @NotBlank
     private String password;
 
-
-
 }
